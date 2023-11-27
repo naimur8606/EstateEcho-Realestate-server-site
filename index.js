@@ -62,15 +62,21 @@ async function run() {
             res.send(result);
         })
 
+        app.post("/Reviews", async (req, res) => {
+            const review = req.body;
+            const result = await allReviews.insertOne(review);
+            res.send(result);
+        })
+
         app.get("/Users", async (req, res) => {
             const result = await allUsers.find().toArray();
             res.send(result);
         })
         app.get("/Users/:email", async (req, res) => {
-            const query = {email:req.params?.email}
+            const query = { email: req.params?.email }
             const result = await allUsers.findOne(query);
             res.send(result)
-          })
+        })
 
         app.post("/Users", async (req, res) => {
             const user = req?.body;
@@ -82,11 +88,35 @@ async function run() {
             }
         })
 
+        app.get("/Wishlist/:userEmail", async (req, res) => {
+            const query = { userEmail: req.params?.userEmail }
+            const result = await allWishlist.find(query).toArray();
+            res.send(result)
+        })
+        app.get("/Wishlist/makeOffer/:id", async (req, res) => {
+            const query = { _id: new ObjectId(req.params?.id) }
+            const result = await allWishlist.findOne(query);
+            res.send(result)
+        })
+
         app.post('/Wishlist', async (req, res) => {
             const item = req.body;
-            const result = await allWishlist.insertOne(item);
-            res.send(result);
+            const query = {email:req.body?.email, PropertyId:req.body?.PropertyId}
+            const present = await allWishlist.findOne(query);
+            if (!present) {
+                const result = await allWishlist.insertOne(item);
+                res.send(result);
+            }
+            else{
+                res.send({message: 'Already added'})
+            }
         });
+
+        app.delete("/Wishlist/:id", async (req, res) => {
+            const query = { _id: new ObjectId(req.params?.id) }
+            const result = await allWishlist.deleteOne(query);
+            res.send(result)
+        })
 
 
         // Send a ping to confirm a successful connection
