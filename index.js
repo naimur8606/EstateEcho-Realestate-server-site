@@ -82,6 +82,12 @@ async function run() {
             }
         })
 
+        app.post('/Wishlist', async (req, res) => {
+            const item = req.body;
+            const result = await allWishlist.insertOne(item);
+            res.send(result);
+        });
+
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
