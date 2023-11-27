@@ -65,11 +65,20 @@ async function run() {
             const result = await allUsers.find().toArray();
             res.send(result);
         })
+        app.get("/Users/:email", async (req, res) => {
+            const query = {email:req.params?.email}
+            const result = await allUsers.findOne(query);
+            res.send(result)
+          })
 
         app.post("/Users", async (req, res) => {
             const user = req?.body;
-            const result = await allUsers.insertOne(user);
-            res.send(result);
+            const query = { email: req?.body?.email };
+            const present = await allUsers.findOne(query)
+            if (!present) {
+                const result = await allUsers.insertOne(user);
+                res.send(result);
+            }
         })
 
 
