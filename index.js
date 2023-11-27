@@ -31,6 +31,7 @@ async function run() {
         const allReviews = client.db("EstateEcho").collection("Reviews");
         const allAdvertisement = client.db("EstateEcho").collection("Advertisement");
         const allUsers = client.db("EstateEcho").collection("Users");
+        const allWishlist = client.db("EstateEcho").collection("Wishlist");
 
 
         app.get("/Properties", async (req, res) => {
