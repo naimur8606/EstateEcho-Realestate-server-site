@@ -36,7 +36,8 @@ async function run() {
 
 
         app.get("/Properties", async (req, res) => {
-            const result = await allProperties.find().toArray();
+            const query = {verificationStatus:"Verified"}
+            const result = await allProperties.find(query).toArray();
             res.send(result);
         })
 
@@ -44,6 +45,12 @@ async function run() {
             const id = req.params?.id;
             const query = { _id: new ObjectId(id) }
             const result = await allProperties.findOne(query);
+            res.send(result);
+        })
+
+        app.get("/Properties/myAdded/:email", async (req, res) => {
+            const query = { agentEmail: req.params?.email }
+            const result = await allProperties.find(query).toArray();
             res.send(result);
         })
 
@@ -113,7 +120,7 @@ async function run() {
 
         app.post('/Wishlist', async (req, res) => {
             const item = req.body;
-            const query = {email:req.body?.email, PropertyId:req.body?.PropertyId}
+            const query = {userEmail:req.body?.userEmail, PropertyId:req.body?.PropertyId}
             const present = await allWishlist.findOne(query);
             if (!present) {
                 const result = await allWishlist.insertOne(item);
