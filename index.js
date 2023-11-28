@@ -65,16 +65,28 @@ async function run() {
         });
 
         app.patch('/updateProperty/:id', async (req, res) => {
-            const property = req.body;
+            let property
             const id = req?.params?.id;
-            const filter = { _id: new ObjectId(id) }
+            const filter = { _id: new ObjectId(id) };
+            const query= filter;
+            if(req.body.propertyTitle !== null){
+                property = req.body
+            }else{
+                property = await allBoughtProperties.findOne(query);
+            }
             const updatedDoc = {
                 $set: {
-                    name: property.name,
-                    category: property.category,
-                    price: property.price,
-                    recipe: property.recipe,
-                    image: property.image
+                    
+                    propertyTitle : property?.propertyTitle,
+                    propertyLocation : property?.propertyLocation,
+                    agentName : property?.agentName,
+                    agentImage : property?.agentImage,
+                    verificationStatus : req.body.propertyTitle ? property?.verificationStatus : req.body?.status ,
+                    priceRange : property?.priceRange,
+                    propertyImage : property?.propertyImage,
+                    propertyDescription : property?.propertyDescription,
+                    agentEmail : property?.agentEmail,
+
                 }
             }
             const result = await allProperties.updateOne(filter, updatedDoc)
