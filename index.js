@@ -119,6 +119,10 @@ async function run() {
             res.send(result)
         })
 
+        app.get("/boughtProperties", async (req, res) => {
+            const result = await allBoughtProperties.find().toArray();
+            res.send(result);
+        })
         app.post("/boughtProperties", async (req, res) => {
             const review = req.body;
             const result = await allBoughtProperties.insertOne(review);
