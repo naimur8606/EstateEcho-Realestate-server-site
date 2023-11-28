@@ -74,6 +74,12 @@ async function run() {
             res.send(result);
         })
 
+        app.delete("/Reviews/:id", async (req, res) => {
+            const query = {_id: new ObjectId(req.params?.id)};
+            const result = await allReviews.deleteOne(query);
+            res.send(result);
+        })
+
         app.get("/Users", async (req, res) => {
             const result = await allUsers.find().toArray();
             res.send(result);
