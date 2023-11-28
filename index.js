@@ -60,7 +60,7 @@ async function run() {
             res.send(result);
         });
 
-        app.patch('/Properties/:id', async (req, res) => {
+        app.patch('/updateProperty/:id', async (req, res) => {
             const property = req.body;
             const id = req?.params?.id;
             const filter = { _id: new ObjectId(id) }
@@ -73,10 +73,16 @@ async function run() {
                     image: property.image
                 }
             }
-
             const result = await allProperties.updateOne(filter, updatedDoc)
             res.send(result);
         });
+
+        app.delete("/deleteProperty/:id", async (req, res) => {
+            const id = req.params?.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await allProperties.deleteOne(query);
+            res.send(result);
+        })
 
         app.get("/Advertisement", async (req, res) => {
             const result = await allAdvertisement.find().toArray();
