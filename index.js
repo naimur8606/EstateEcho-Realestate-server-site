@@ -36,7 +36,7 @@ async function run() {
 
 
         app.get("/Properties", async (req, res) => {
-            const query = {verificationStatus:"Verified"}
+            const query = { verificationStatus: "Verified" }
             const result = await allProperties.find(query).toArray();
             res.send(result);
         })
@@ -60,6 +60,24 @@ async function run() {
             res.send(result);
         });
 
+        app.patch('/Properties/:id', async (req, res) => {
+            const property = req.body;
+            const id = req?.params?.id;
+            const filter = { _id: new ObjectId(id) }
+            const updatedDoc = {
+                $set: {
+                    name: property.name,
+                    category: property.category,
+                    price: property.price,
+                    recipe: property.recipe,
+                    image: property.image
+                }
+            }
+
+            const result = await allProperties.updateOne(filter, updatedDoc)
+            res.send(result);
+        });
+
         app.get("/Advertisement", async (req, res) => {
             const result = await allAdvertisement.find().toArray();
             res.send(result);
@@ -70,7 +88,7 @@ async function run() {
             res.send(result);
         })
         app.get("/Reviews/:email", async (req, res) => {
-            const query = {reviewerEmail:req.params?.email};
+            const query = { reviewerEmail: req.params?.email };
             const result = await allReviews.find(query).toArray();
             res.send(result);
         })
@@ -82,7 +100,7 @@ async function run() {
         })
 
         app.delete("/Reviews/:id", async (req, res) => {
-            const query = {_id: new ObjectId(req.params?.id)};
+            const query = { _id: new ObjectId(req.params?.id) };
             const result = await allReviews.deleteOne(query);
             res.send(result);
         })
@@ -120,14 +138,14 @@ async function run() {
 
         app.post('/Wishlist', async (req, res) => {
             const item = req.body;
-            const query = {userEmail:req.body?.userEmail, PropertyId:req.body?.PropertyId}
+            const query = { userEmail: req.body?.userEmail, PropertyId: req.body?.PropertyId }
             const present = await allWishlist.findOne(query);
             if (!present) {
                 const result = await allWishlist.insertOne(item);
                 res.send(result);
             }
-            else{
-                res.send({message: 'Already added'})
+            else {
+                res.send({ message: 'Already added' })
             }
         });
 
