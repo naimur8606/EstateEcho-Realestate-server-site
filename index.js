@@ -68,24 +68,24 @@ async function run() {
             let property
             const id = req?.params?.id;
             const filter = { _id: new ObjectId(id) };
-            const query= filter;
-            if(req.body.propertyTitle !== null){
+            const query = filter;
+            if (req.body.propertyTitle !== null) {
                 property = req.body
-            }else{
+            } else {
                 property = await allBoughtProperties.findOne(query);
             }
             const updatedDoc = {
                 $set: {
-                    
-                    propertyTitle : property?.propertyTitle,
-                    propertyLocation : property?.propertyLocation,
-                    agentName : property?.agentName,
-                    agentImage : property?.agentImage,
-                    verificationStatus : req.body.propertyTitle ? property?.verificationStatus : req.body?.status ,
-                    priceRange : property?.priceRange,
-                    propertyImage : property?.propertyImage,
-                    propertyDescription : property?.propertyDescription,
-                    agentEmail : property?.agentEmail,
+
+                    propertyTitle: property?.propertyTitle,
+                    propertyLocation: property?.propertyLocation,
+                    agentName: property?.agentName,
+                    agentImage: property?.agentImage,
+                    verificationStatus: req.body.propertyTitle ? property?.verificationStatus : req.body?.status,
+                    priceRange: property?.priceRange,
+                    propertyImage: property?.propertyImage,
+                    propertyDescription: property?.propertyDescription,
+                    agentEmail: property?.agentEmail,
 
                 }
             }
@@ -131,7 +131,7 @@ async function run() {
             const result = await allUsers.find().toArray();
             res.send(result);
         })
-        app.get("/Users/:email", async (req, res) => {
+        app.get("/Users/specific/:email", async (req, res) => {
             const query = { email: req.params?.email }
             const result = await allUsers.findOne(query);
             res.send(result)
@@ -145,6 +145,25 @@ async function run() {
                 const result = await allUsers.insertOne(user);
                 res.send(result);
             }
+        })
+
+        app.patch("/Users/:email", async (req, res) => {
+            const email = req.params.email;
+            const filter = { email: email };
+            let query 
+            if(req.body.status === "Fraud"){
+                query = {agentEmail:email}
+                const propertyDelete = await allProperties.deleteMany(query)
+                query = {reviewerEmail:email }
+                const reviewsDelete = await allReviews.deleteMany(query)
+            }
+            const updatedDoc = {
+                $set: {
+                    status: req.body.status,
+                },
+            };
+            const result = await allUsers.updateOne(filter, updatedDoc);
+            res.send(result);
         })
 
         app.get("/Wishlist/:userEmail", async (req, res) => {
@@ -195,31 +214,14 @@ async function run() {
         })
 
         app.patch("/UpdateBoughtProperties/:id", async (req, res) => {
-            const update = req.body;
-            const id = req?.params?.id;
+            const id = req.params.id;
             const filter = { _id: new ObjectId(id) };
-            const query= filter;
-            const property = await allBoughtProperties.findOne(query);
             const updatedDoc = {
                 $set: {
-                    propertyLocation:property?.propertyLocation,
-                    propertyTitle:property?.propertyTitle,
-                    propertyImage:property?.propertyImage,
-                    AgentName:property?.AgentName,
-                    offeredAmount:property?.offeredAmount,
-                    priceRange:property?.priceRange,
-                    buyerName:property?.buyerName,
-                    buyingDate:property?.buyingDate,
-                    PropertyId:property?.PropertyId,
-                    buyerEmail:property?.buyerEmail,
-                    status:update?.status,
-                    agentEmail:property?.agentEmail,
-                    PropertyId:property?.PropertyId,
-                    buyerEmail:property?.buyerEmail
-
-                }
-            }
-            const result = await allBoughtProperties.updateOne(filter, updatedDoc)
+                    status: req.body.status,
+                },
+            };
+            const result = await allBoughtProperties.updateOne(filter, updatedDoc);
             res.send(result);
         })
 
